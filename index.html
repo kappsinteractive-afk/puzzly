@@ -213,6 +213,50 @@
     footer a:hover {
       text-decoration: underline;
     }
+
+    .privacy-text {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .privacy-text h3 {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 1.05rem;
+      margin: 1.35rem 0 0.5rem;
+      color: #ddd6fe;
+    }
+
+    .privacy-text p {
+      margin: 0.65rem 0;
+    }
+
+    .privacy-text ul {
+      margin: 0.5rem 0 0.75rem 1.15rem;
+      padding: 0;
+    }
+
+    .privacy-text li {
+      margin-bottom: 0.45rem;
+    }
+
+    .privacy-text .contact a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .privacy-text .contact a:hover {
+      text-decoration: underline;
+    }
+
+    .privacy-note {
+      font-size: 0.88rem;
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      background: rgba(168, 85, 247, 0.12);
+      border: 1px solid rgba(168, 85, 247, 0.25);
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
   </style>
 </head>
 <body>
@@ -251,8 +295,42 @@
       </ul>
     </section>
 
+    <section class="panel" id="privacy" aria-labelledby="privacy-title">
+      <h2 id="privacy-title">Политика за поверителност</h2>
+      <div class="privacy-text">
+        <p class="privacy-note">
+          Тази уеб страница е само демонстрация в браузъра и не записва профил или напредък като мобилното приложение. По-долу е политиката за мобилното приложение <strong>Пъзел</strong>.
+        </p>
+        <p><strong>Последна актуализация:</strong> април 2026 г.</p>
+        <p>
+          Приложението „Пъзел“ се предоставя от <strong>KApps Interactive</strong>. Уважаваме поверителността ви.
+        </p>
+
+        <h3>Какви данни се обработват</h3>
+        <ul>
+          <li>Настройки (език, тема) и напредък в играта (постижения, класации, XP) се съхраняват <strong>локално на вашето устройство</strong>, освен ако не използвате функции, които изискват мрежа.</li>
+          <li>Рекламни SDK (напр. Google AdMob), ако са активни в приложението, могат да събират идентификатори на устройството и данни за реклами според политиките на съответния доставчик.</li>
+        </ul>
+
+        <h3>Деца</h3>
+        <p>Приложението е подходящо за широка аудитория. Ако сте родител и имате въпроси, свържете се с нас.</p>
+
+        <h3>Вашите права</h3>
+        <p>Можете да изтриете данните на приложението чрез настройките на операционната система (премахване на данни / деинсталиране).</p>
+
+        <h3>Контакт</h3>
+        <p class="contact">
+          Имейл:
+          <a href="mailto:kapps.interactive@gmail.com">kapps.interactive@gmail.com</a>
+        </p>
+      </div>
+    </section>
+
     <footer>
-      <p>Страница за играта <strong>Пъзел</strong> · Демо пъзел с произволна снимка (Unsplash)</p>
+      <p>
+        Страница за играта <strong>Пъзел</strong> · Демо пъзел с произволна снимка (Unsplash)
+        · <a href="#privacy">Политика за поверителност</a>
+      </p>
     </footer>
   </div>
 
