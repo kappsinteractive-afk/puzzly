@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Пъзел — подреди снимката! Забавна игра с нива, постижения и ежедневни предизвикателства." />
+  <title>Пъзел — игра с пъзели</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;800&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f0b1a;
+      --surface: #1a1528;
+      --accent: #a855f7;
+      --accent2: #f472b6;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --gold: #facc15;
+      --radius: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Manrope", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      z-index: 0;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    header {
+      text-align: center;
+      padding: 2rem 0 1.5rem;
+    }
+
+    .logo {
+      font-size: 3.2rem;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+      filter: drop-shadow(0 4px 20px rgba(168, 85, 247, 0.45));
+    }
+
+    h1 {
+      font-family: "Fraunces", Georgia, serif;
+      font-weight: 800;
+      font-size: clamp(2rem, 6vw, 2.75rem);
+      margin: 0 0 0.75rem;
+      background: linear-gradient(135deg, #e9d5ff 0%, #c4b5fd 40%, #f472b6 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .lead {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 32rem;
+      margin: 0 auto 2rem;
+      font-weight: 500;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+    }
+
+    .panel h2 {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 1.35rem;
+      margin: 0 0 1rem;
+      color: #ddd6fe;
+    }
+
+    ul.features {
+      margin: 0;
+      padding-left: 1.2rem;
+      color: var(--muted);
+    }
+
+    ul.features li {
+      margin-bottom: 0.5rem;
+    }
+
+    ul.features strong {
+      color: var(--text);
+    }
+
+    /* Mini puzzle */
+    .puzzle-section {
+      text-align: center;
+    }
+
+    .puzzle-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    button.btn {
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 0.9rem;
+      padding: 0.65rem 1.25rem;
+      border-radius: 999px;
+      border: 2px solid rgba(168, 85, 247, 0.5);
+      background: rgba(30, 27, 46, 0.95);
+      color: #e9d5ff;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    button.btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(168, 85, 247, 0.25);
+    }
+
+    button.btn.primary {
+      background: linear-gradient(135deg, #a855f7, #db2777);
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .status {
+      font-size: 0.95rem;
+      color: var(--muted);
+      min-height: 1.5em;
+    }
+
+    .status.win {
+      color: var(--gold);
+      font-weight: 800;
+    }
+
+    .board-wrap {
+      display: inline-block;
+      padding: 6px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, rgba(168, 85, 247, 0.35), rgba(244, 114, 182, 0.2));
+    }
+
+    #board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      width: min(72vw, 320px);
+      height: min(72vw, 320px);
+      background: #1e1b2e;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .tile {
+      position: relative;
+      cursor: pointer;
+      border-radius: 4px;
+      overflow: hidden;
+      transition: box-shadow 0.15s, transform 0.12s;
+      background-image: var(--img);
+      background-size: 300% 300%;
+      background-repeat: no-repeat;
+    }
+
+    .tile:hover {
+      box-shadow: inset 0 0 0 2px rgba(250, 204, 21, 0.5);
+    }
+
+    .tile.selected {
+      box-shadow: inset 0 0 0 3px #facc15;
+      z-index: 2;
+    }
+
+    footer {
+      text-align: center;
+      padding-top: 2rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="wrap">
+    <header>
+      <div class="logo" aria-hidden="true">🧩</div>
+      <h1>Пъзел</h1>
+      <p class="lead">
+        Разбъркай картинката и я подреди, за да спечелиш. В мобилното приложение има още нива, теми, постижения и ежедневни предизвикателства.
+      </p>
+    </header>
+
+    <section class="panel puzzle-section" aria-labelledby="demo-title">
+      <h2 id="demo-title">Опитай в браузъра (3×3)</h2>
+      <p class="lead" style="margin-bottom: 1rem; font-size: 0.95rem;">
+        Избери плочка, после друга — те се разменят. Подреди изображението.
+      </p>
+      <div class="puzzle-toolbar">
+        <button type="button" class="btn primary" id="shuffleBtn">Разбъркай</button>
+        <button type="button" class="btn" id="hintBtn" title="Показва цялата картина за миг">Подсказка</button>
+      </div>
+      <p class="status" id="status" role="status"></p>
+      <div class="board-wrap">
+        <div id="board" role="grid" aria-label="Пъзел 3 по 3"></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>В приложението</h2>
+      <ul class="features">
+        <li><strong>Много теми</strong> — анимации, животни, природа, храна, числа и др.</li>
+        <li><strong>Нива на трудност</strong> — от малки мрежи до истинско предизвикателство.</li>
+        <li><strong>Светла и тъмна тема</strong>, български и английски език.</li>
+        <li><strong>Класация, XP и постижения</strong> — играй и трупай успехи.</li>
+      </ul>
+    </section>
+
+    <footer>
+      <p>Страница за играта <strong>Пъзел</strong> · Демо пъзел с произволна снимка (Unsplash)</p>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      const IMG =
+        "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=600&h=600&fit=crop";
+      const SIZE = 3;
+      const N = SIZE * SIZE;
+
+      let order = [];
+      let selected = null;
+      let hintTimer = null;
+
+      const board = document.getElementById("board");
+      const statusEl = document.getElementById("status");
+      const shuffleBtn = document.getElementById("shuffleBtn");
+      const hintBtn = document.getElementById("hintBtn");
+
+      board.style.setProperty("--img", 'url("' + IMG + '")');
+
+      function solved() {
+        return order.every((v, i) => v === i);
+      }
+
+      function setStatus(msg, isWin) {
+        statusEl.textContent = msg;
+        statusEl.className = "status" + (isWin ? " win" : "");
+      }
+
+      function render() {
+        board.innerHTML = "";
+        for (let pos = 0; pos < N; pos++) {
+          const piece = order[pos];
+          const row = Math.floor(piece / SIZE);
+          const col = piece % SIZE;
+          const tile = document.createElement("button");
+          tile.type = "button";
+          tile.className = "tile" + (selected === pos ? " selected" : "");
+          tile.setAttribute("aria-label", "Плочка " + (pos + 1));
+          tile.style.backgroundPosition = col * 50 + "% " + row * 50 + "%";
+          tile.addEventListener("click", () => onTile(pos));
+          board.appendChild(tile);
+        }
+        if (solved()) setStatus("🎉 Браво! Пъзелът е подреден!", true);
+      }
+
+      function onTile(pos) {
+        if (solved()) return;
+        if (selected === null) {
+          selected = pos;
+        } else if (selected === pos) {
+          selected = null;
+        } else {
+          const tmp = order[selected];
+          order[selected] = order[pos];
+          order[pos] = tmp;
+          selected = null;
+        }
+        render();
+      }
+
+      function shuffle() {
+        do {
+          order = Array.from({ length: N }, (_, i) => i);
+          for (let i = N - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [order[i], order[j]] = [order[j], order[i]];
+          }
+        } while (solved());
+        selected = null;
+        setStatus("Подреди картинката!");
+        render();
+      }
+
+      function hint() {
+        if (hintTimer) clearTimeout(hintTimer);
+        board.style.opacity = "0.35";
+        hintTimer = setTimeout(function () {
+          board.style.opacity = "1";
+          hintTimer = null;
+        }, 600);
+      }
+
+      order = Array.from({ length: N }, (_, i) => i);
+      shuffleBtn.addEventListener("click", shuffle);
+      hintBtn.addEventListener("click", hint);
+
+      shuffle();
+    })();
+  </script>
+</body>
+</html>
